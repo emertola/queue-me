@@ -1,14 +1,13 @@
-import { Request, Response } from 'express';
-import { CreateUserDto } from '../dtos';
-import { BaseResponse } from '../types';
-import { User } from '../types';
+import { Request, Response } from "express";
+import { CreateUserDto } from "../dtos";
+import { BaseResponse, User } from "../types";
 import {
   ValidationError,
   matchedData,
   validationResult,
-} from 'express-validator';
-import { hashPassword } from '../utils';
-import { User as UserSchema } from '../mongoose/schemas/user.schema';
+} from "express-validator";
+import { hashPassword } from "../utils";
+import { User as UserSchema } from "../mongoose/schemas/user.schema";
 
 export const getAllUsers = async (request: Request, response: Response) => {
   if (!request.user) {
@@ -31,7 +30,7 @@ export const createUserHandler = async (
   if (!result.isEmpty()) {
     return response.status(400).send({
       data: result.array(),
-      message: 'Error creating the user!',
+      message: "Error creating the user!",
     });
   }
 
@@ -46,7 +45,7 @@ export const createUserHandler = async (
     const savedUser = await newUser.save();
     return response.status(201).send({
       data: savedUser.toObject(),
-      message: 'User successfully created!',
+      message: "User successfully created!",
     });
   } catch (error) {
     return response.sendStatus(400);
