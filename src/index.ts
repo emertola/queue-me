@@ -11,7 +11,14 @@ const PORT = 3001;
 app.use(express.json());
 app.use(cookieParser());
 app.use(
-  session({ secret: 'session123', resave: false, saveUninitialized: false })
+  session({
+    secret: 'session123',
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+      maxAge: 60000 * 60,
+    },
+  })
 );
 app.use(passport.initialize());
 app.use(passport.session());
