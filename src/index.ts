@@ -3,10 +3,16 @@ import cookieParser from 'cookie-parser';
 import session from 'express-session';
 import passport from 'passport';
 import routes from './routes';
+import mongoose from 'mongoose';
 import './strategies/local-strategy';
 
 const app = express();
 const PORT = 3001;
+
+mongoose
+  .connect('mongodb://localhost:27017/mongodb-try')
+  .then(() => console.log('Connected to the database!'))
+  .catch((error) => console.log(`Error: ${error}`));
 
 app.use(express.json());
 app.use(cookieParser());

@@ -2,6 +2,13 @@ import { Request, Response } from 'express';
 import { CreateUserDto } from '../dtos';
 import { BaseResponse } from '../types';
 import { User } from '../types';
+import {
+  ValidationError,
+  matchedData,
+  validationResult,
+} from 'express-validator';
+import { hashPassword } from '../utils';
+import { User as UserSchema } from '../mongoose/schemas/user.schema';
 
 export const getAllUsers = (request: Request, response: Response) => {
   response.send([]);
@@ -11,12 +18,33 @@ export const getUserById = (request: Request, response: Response) => {
   response.send({});
 };
 
-export const createUser = (
+export const createUserHandler = async (
   request: Request<{}, {}, CreateUserDto>,
-  response: Response<BaseResponse<User>>
+  response: Response<BaseResponse<User | ValidationError[]>>
 ) => {
-  response.status(201).send({
-    data: { id: 1, username: 'emertola', email: 'emertola@gmail.com' },
-    message: 'User successfully created!',
+  const result = validationResult(request);
+
+  if (!result.isEmpty()) {
+    return response.status(400).send({
+      data: result.array(),
+      message: 'Error creating the user!',
+    });
+  }
+
+  const data: Record<string, any> = matchedData(request, {
+    includeOptionals: false,
   });
+  data.password = hashPassword(data.password);
+
+  const newUser = new UserSchema(data);
+
+  try {
+    const savedUser = await newUser.save();
+    return response.status(201).send({
+      data: savedUser.toObject(),
+      message: 'User successfully created!',
+    });
+  } catch (error) {
+    return response.sendStatus(400);
+  }
 };
