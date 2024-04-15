@@ -10,8 +10,12 @@ import {
 import { hashPassword } from '../utils';
 import { User as UserSchema } from '../mongoose/schemas/user.schema';
 
-export const getAllUsers = (request: Request, response: Response) => {
-  response.send([]);
+export const getAllUsers = async (request: Request, response: Response) => {
+  if (!request.user) {
+    return response.sendStatus(401);
+  } else {
+    return await UserSchema.find().then((users) => response.send(users));
+  }
 };
 
 export const getUserById = (request: Request, response: Response) => {

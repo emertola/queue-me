@@ -1,14 +1,16 @@
 import passport from 'passport';
 import { IVerifyOptions, Strategy } from 'passport-local';
-import { mockUsers } from '../utils';
+import { comparePassword, mockUsers } from '../utils';
+import { User } from '../mongoose/schemas/user.schema';
 
 passport.serializeUser((user: any, done) => {
   done(null, user?.id);
 });
 
-passport.deserializeUser((id, done) => {
+passport.deserializeUser(async (id, done) => {
   try {
-    const findUser = mockUsers.find((user) => user.id === id);
+    const findUser = await User.findById(id);
+
     if (!findUser) {
       throw new Error('User Not Found!');
     }
@@ -20,7 +22,7 @@ passport.deserializeUser((id, done) => {
 
 passport.use(
   new Strategy(
-    (
+    async (
       username: string,
       password: string,
       done: (
@@ -33,14 +35,14 @@ passport.use(
       // ex. validate if the user exists from the database
 
       try {
-        const findUser = mockUsers.find((user) => user.username === username);
+        const findUser = await User.findOne({ username });
+
         if (!findUser) {
           throw new Error('User not found!');
         }
 
-        const passwordMatch = findUser?.password === password;
-        if (!passwordMatch) {
-          throw new Error('Invalid Credentials!');
+        if (!comparePassword(password, findUser.password)) {
+          throw new Error('Bad Credentials');
         }
 
         done(null, findUser);
