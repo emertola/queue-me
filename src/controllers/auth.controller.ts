@@ -39,14 +39,13 @@ export const signUpUser = async (req: Request, res: Response) => {
 export const loginUser = async (req: Request, res: Response) => {
   try {
     const customUser = req.user as IAuthUser;
-    const localAccessToken = jwt.sign(
+    const token = jwt.sign(
       {
         id: customUser._id,
       },
       process.env.JWT_SECRET as string
     );
-    console.log('localAccessToken', localAccessToken);
-    res.status(200).send({ localAccessToken });
+    res.status(200).send({ token });
   } catch (error) {
     res.status(500).send({ message: 'Error logging in', error });
   }
