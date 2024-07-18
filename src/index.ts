@@ -1,33 +1,22 @@
-import express from "express";
-import cookieParser from "cookie-parser";
-import session from "express-session";
-import passport from "passport";
-import routes from "./routes";
-import mongoose from "mongoose";
-import "./strategies/local-strategy";
+import express from 'express';
+import passport from 'passport';
+import routes from './routes';
+import dotenv from 'dotenv';
+import './strategies/local-strategy';
+import connectDB from './database/connect';
+
+dotenv.config();
 
 const app = express();
-const PORT = 3001;
-
-mongoose
-  .connect("mongodb://localhost:27017/mongodb-try")
-  .then(() => console.log("Connected to the database!"))
-  .catch((error) => console.log(`Error: ${error}`));
+const PORT = process.env.PORT ?? 3001;
 
 app.use(express.json());
-app.use(cookieParser());
-app.use(
-  session({
-    secret: "session123",
-    resave: false,
-    saveUninitialized: false,
-    cookie: {
-      maxAge: 60000 * 60,
-    },
-  })
-);
 app.use(passport.initialize());
-app.use(passport.session());
-app.use("/api/v1", routes);
 
-app.listen(PORT, () => console.log(`Running express server on PORT ${PORT}`));
+app.use('/api/v1', routes);
+
+app.listen(PORT, () => {
+  // initiate db connection
+  connectDB();
+  console.log(`Running express server on PORT ${PORT}`);
+});

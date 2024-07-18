@@ -1,53 +1,25 @@
 import passport from 'passport';
-import { IVerifyOptions, Strategy } from 'passport-local';
-import { comparePassword, mockUsers } from '../utils';
-import { User } from '../mongoose/schemas/user.schema';
-
-passport.serializeUser((user: any, done) => {
-  done(null, user?.id);
-});
-
-passport.deserializeUser(async (id, done) => {
-  try {
-    const findUser = await User.findById(id);
-
-    if (!findUser) {
-      throw new Error('User Not Found!');
-    }
-    done(null, findUser);
-  } catch (error) {
-    done(error, null);
-  }
-});
+import { Strategy as LocalStrategy } from 'passport-local';
+import { comparePassword, hashPassword } from '../utils';
+import { AuthLocalUser } from '../schemas';
 
 passport.use(
-  new Strategy(
-    async (
-      username: string,
-      password: string,
-      done: (
-        error: any,
-        user?: Express.User | false,
-        options?: IVerifyOptions
-      ) => void
-    ) => {
-      // code here will be responsible for validating username & password
-      // ex. validate if the user exists from the database
-
+  new LocalStrategy(
+    { usernameField: 'email' },
+    async (email, password, next) => {
       try {
-        const findUser = await User.findOne({ username });
+        const user = await AuthLocalUser.findOne({ email });
 
-        if (!findUser) {
-          throw new Error('User not found!');
+        const hashedPassword = hashPassword(password);
+        const passwordMatch = comparePassword(password, hashedPassword);
+
+        if (!(user || passwordMatch)) {
+          return next(null, false, { message: 'Invalid credentials!' });
         }
 
-        if (!comparePassword(password, findUser.password)) {
-          throw new Error('Bad Credentials');
-        }
-
-        done(null, findUser);
+        return next(null, user?.toObject());
       } catch (error) {
-        done(error);
+        return next(error);
       }
     }
   )
