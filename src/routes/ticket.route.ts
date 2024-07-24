@@ -1,8 +1,8 @@
 import { Router } from 'express';
 import { checkSchema } from 'express-validator';
 import { ticketValidationSchema } from '../validations';
-import { handleValidationErrors } from '../middlewares';
-import { addTicket } from '../controllers';
+import { handleValidationErrors, verifyAuth } from '../middlewares';
+import { addTicket, getTicketsPagedList } from '../controllers';
 
 const router = Router();
 
@@ -12,5 +12,7 @@ router.post(
   handleValidationErrors,
   addTicket
 );
+
+router.get('/list', verifyAuth, getTicketsPagedList);
 
 export default router;
