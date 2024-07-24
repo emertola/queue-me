@@ -1,7 +1,7 @@
 import { Model, model, Schema } from 'mongoose';
 import { IAuthUser } from '../models';
 
-const AuthLocalUserSchema = new Schema<IAuthUser>({
+const UserSchema = new Schema<IAuthUser>({
   firstName: {
     type: String,
     required: true,
@@ -27,7 +27,4 @@ const AuthLocalUserSchema = new Schema<IAuthUser>({
   },
 });
 
-export const AuthLocalUser: Model<IAuthUser> = model(
-  'AuthLocalUser',
-  AuthLocalUserSchema
-);
+export const User: Model<IAuthUser> = model('User', UserSchema);
