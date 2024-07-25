@@ -9,7 +9,8 @@ export const addTicket = async (req: Request, res: Response<ApiResponse>) => {
     includeOptionals: false,
   });
 
-  const count = await Ticket.countDocuments();
+  let count = await Ticket.countDocuments();
+  count = count < 1 ? 10000 : count + 10000;
 
   const newTicket = new Ticket({ ...data, ticketNumber: count + 1 });
   await newTicket.save();
@@ -36,11 +37,11 @@ export const getTicketsPagedList = async (req: Request, res: Response) => {
   try {
     const items = await Ticket.find(filterOptions, '-password')
       .sort(sortOptions)
-      .skip(page * limit)
+      .skip((page < 0 ? 0 : page) * limit)
       .limit(limit);
     const count = await Ticket.countDocuments(filterOptions);
     const result: IPaginated = {
-      currentPage: page,
+      currentPage: page < 0 ? 0 : page,
       pageSize: limit,
       results: items,
       totalElements: count,
