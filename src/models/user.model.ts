@@ -9,4 +9,5 @@ export interface IAuthUser extends Document {
   password: string;
   roles?: string[];
   _id?: string;
+  assignedWindow?: number;
 }

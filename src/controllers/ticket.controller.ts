@@ -40,11 +40,14 @@ export const getTicketsPagedList = async (req: Request, res: Response) => {
       .skip((page < 0 ? 0 : page) * limit)
       .limit(limit);
     const count = await Ticket.countDocuments(filterOptions);
+    const totalPages = Math.ceil(count / limit);
+    const hasNextPage = page + 1 < totalPages;
     const result: IPaginated = {
       currentPage: page < 0 ? 0 : page,
       pageSize: limit,
       results: items,
       totalElements: count,
+      hasNextPage,
     };
 
     res.json(result);
