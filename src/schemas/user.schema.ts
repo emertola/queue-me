@@ -1,7 +1,7 @@
 import { Model, model, Schema } from 'mongoose';
 import { IAuthUser } from '../models';
 
-const UserSchema = new Schema<IAuthUser>({
+export const UserSchema = new Schema<IAuthUser>({
   firstName: {
     type: String,
     required: true,

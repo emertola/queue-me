@@ -2,7 +2,7 @@ import { Model, model, Schema } from 'mongoose';
 import { ITicket } from '../models';
 import { TicketStatus } from '../enums';
 
-const TicketSchema = new Schema<ITicket>({
+export const TicketSchema = new Schema<ITicket>({
   ticketNumber: Number,
   status: {
     type: String,
