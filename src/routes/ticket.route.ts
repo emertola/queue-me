@@ -8,6 +8,7 @@ const router = Router();
 
 router.post(
   '/add',
+  verifyAuth,
   checkSchema(ticketValidationSchema),
   handleValidationErrors,
   addTicket

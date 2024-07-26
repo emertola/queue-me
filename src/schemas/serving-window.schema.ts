@@ -5,7 +5,7 @@ import { UserSchema } from './user.schema';
 
 const SWindowSchema = new Schema<ServingWindow>({
   windowStatus: String,
-  windowNumber: Number,
+  windowName: String,
   nowServing: TicketSchema,
   assignedPersonnel: UserSchema,
 });

@@ -4,22 +4,18 @@ import { IAuthUser } from '../models';
 export const UserSchema = new Schema<IAuthUser>({
   firstName: {
     type: String,
-    required: true,
   },
   middleName: String,
   lastName: {
     type: String,
-    required: true,
   },
   mobile: String,
   email: {
     type: String,
-    required: true,
     unique: true,
   },
   password: {
     type: String,
-    required: true,
   },
   roles: {
     type: [String],
