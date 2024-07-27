@@ -6,7 +6,10 @@ export interface UserName extends Document {
   lastName: string;
 }
 
-export interface IAuthUser extends UserName {
+export interface IAuthUser extends Document {
+  firstName: string;
+  middleName?: string;
+  lastName: string;
   mobile?: string;
   email: string;
   password: string;

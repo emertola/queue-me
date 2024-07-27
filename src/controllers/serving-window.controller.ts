@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { ApiResponse, ServingWindow } from '../models';
+import { ApiResponse } from '../models';
 import { SWindow } from '../schemas/serving-window.schema';
 import { matchedData } from 'express-validator';
 
@@ -8,7 +8,10 @@ export const getWindowList = async (
   res: Response<ApiResponse>
 ) => {
   try {
-    const servingWindows = await SWindow.find();
+    const servingWindows = await SWindow.find().populate(
+      'nowServing',
+      'ticketNumber isPriority'
+    );
 
     res.status(200).send({
       data: { result: servingWindows },

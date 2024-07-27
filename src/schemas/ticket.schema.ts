@@ -2,13 +2,16 @@ import { Model, model, Schema } from 'mongoose';
 import { ITicket } from '../models';
 import { TicketStatus } from '../enums';
 
-export const TicketSchema = new Schema<ITicket>({
+const TicketSchema = new Schema<ITicket>({
   ticketNumber: Number,
   status: {
     type: String,
     default: TicketStatus.PENDING,
   },
-  window: Number,
+  servingWindow: {
+    type: Schema.Types.ObjectId,
+    ref: 'SWindow',
+  },
   isPriority: {
     type: Boolean,
     required: true,
