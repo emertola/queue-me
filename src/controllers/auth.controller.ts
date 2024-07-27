@@ -51,3 +51,24 @@ export const loginUser = async (req: Request, res: Response<ApiResponse>) => {
     res.status(500).send({ message: 'Error logging in', data: { error } });
   }
 };
+
+export const currentUser = async (req: Request, res: Response<ApiResponse>) => {
+  try {
+    if (!req.user) {
+      return res.sendStatus(401);
+    }
+
+    const userId = (req.user as IAuthUser).id;
+    const user = await User.findById(userId, '-password');
+
+    if (!user) {
+      return res
+        .status(404)
+        .send({ data: 'User not found!', message: 'Request failed.' });
+    }
+
+    res.status(200).send({ data: user, message: 'Request successful!' });
+  } catch (error) {
+    res.status(500).send({ data: { error }, message: 'Request failed.' });
+  }
+};

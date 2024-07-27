@@ -1,9 +1,10 @@
 import * as express from 'express';
+import { IAuthUser } from './src/models';
 
 declare global {
   namespace Express {
-    export interface Request {
-      customField?: string;
+    interface Request {
+      user: IAuthUser;
     }
   }
 }
