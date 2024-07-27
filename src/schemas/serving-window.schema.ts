@@ -1,8 +1,12 @@
 import { Model, model, Schema } from 'mongoose';
 import { ServingWindow } from '../models';
+import { WindowStatus } from '../enums';
 
 const SWindowSchema = new Schema<ServingWindow>({
-  windowStatus: String,
+  windowStatus: {
+    type: String,
+    default: WindowStatus.INACTIVE,
+  },
   windowName: String,
   nowServing: {
     type: Schema.Types.ObjectId,

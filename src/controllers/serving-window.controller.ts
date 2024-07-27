@@ -10,11 +10,11 @@ export const getWindowList = async (
   try {
     const servingWindows = await SWindow.find().populate(
       'nowServing',
-      'ticketNumber isPriority'
+      'ticketNumber isPriority status'
     );
 
     res.status(200).send({
-      data: { result: servingWindows },
+      data: servingWindows,
       message: 'Request successful!',
     });
   } catch (error) {
