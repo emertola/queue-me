@@ -21,6 +21,8 @@ const UserSchema = new Schema<IAuthUser>({
     type: [String],
     default: [],
   },
+  gender: String,
+  imgUrl: String,
 });
 
 export const User: Model<IAuthUser> = model('User', UserSchema);

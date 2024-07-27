@@ -1,4 +1,5 @@
 import { Document } from 'mongoose';
+import { Gender } from '../enums';
 
 export interface UserName extends Document {
   firstName: string;
@@ -16,5 +17,6 @@ export interface IAuthUser extends Document {
   roles?: string[];
   assignedWindow?: number;
   id?: string;
-  _id?: string;
+  gender: Gender;
+  imgUrl?: string;
 }

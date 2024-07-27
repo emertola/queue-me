@@ -4,9 +4,10 @@ import { hashPassword } from '../utils';
 import { User } from '../schemas/user.schema';
 import jwt from 'jsonwebtoken';
 import { ApiResponse, IAuthUser } from '../models';
+import { Gender } from '../enums';
 
 export const signUpUser = async (req: Request, res: Response<ApiResponse>) => {
-  const { email } = req.body;
+  const { email, gender } = req.body;
 
   const isExistingEmail = await User.findOne({ email });
 
@@ -21,6 +22,14 @@ export const signUpUser = async (req: Request, res: Response<ApiResponse>) => {
     includeOptionals: false,
   });
   data.password = hashPassword(data.password);
+
+  // TODO: update code here
+  if (!gender) {
+    data.gender = Gender.MALE;
+  }
+
+  let boyOrGirl = data.gender === Gender.FEMALE ? 'girl' : 'boy';
+  data.imgUrl = `https://avatar.iran.liara.run/public/${boyOrGirl}`;
 
   const newUser = new User(data);
 
