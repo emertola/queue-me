@@ -23,12 +23,7 @@ export const signUpUser = async (req: Request, res: Response<ApiResponse>) => {
   });
   data.password = hashPassword(data.password);
 
-  // TODO: update code here
-  if (!gender) {
-    data.gender = Gender.MALE;
-  }
-
-  let boyOrGirl = data.gender === Gender.FEMALE ? 'girl' : 'boy';
+  let boyOrGirl = gender === Gender.FEMALE ? 'girl' : 'boy';
   data.imgUrl = `https://avatar.iran.liara.run/public/${boyOrGirl}`;
 
   const newUser = new User(data);
