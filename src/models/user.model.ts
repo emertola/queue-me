@@ -19,4 +19,5 @@ export interface IAuthUser extends Document {
   id?: string;
   gender: Gender;
   imgUrl?: string;
+  active: boolean;
 }

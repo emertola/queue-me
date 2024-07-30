@@ -1,5 +1,6 @@
 import { Model, model, Schema } from 'mongoose';
 import { IAuthUser } from '../models';
+import { Gender } from '../enums';
 
 const UserSchema = new Schema<IAuthUser>({
   firstName: {
@@ -21,8 +22,16 @@ const UserSchema = new Schema<IAuthUser>({
     type: [String],
     default: [],
   },
-  gender: String,
+  gender: {
+    type: String,
+    enum: Gender,
+    required: true,
+  },
   imgUrl: String,
+  active: {
+    type: Boolean,
+    default: true,
+  },
 });
 
 export const User: Model<IAuthUser> = model('User', UserSchema);

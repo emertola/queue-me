@@ -25,6 +25,7 @@ export const signUpUser = async (req: Request, res: Response<ApiResponse>) => {
 
   let boyOrGirl = gender === Gender.FEMALE ? 'girl' : 'boy';
   data.imgUrl = `https://avatar.iran.liara.run/public/${boyOrGirl}`;
+  data.gender = gender;
 
   const newUser = new User(data);
 
