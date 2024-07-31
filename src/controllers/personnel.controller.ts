@@ -42,12 +42,13 @@ export const getPersonnelPagedList = async (req: Request, res: Response) => {
   }
 };
 
-export const assignWindow = async (
+export const assignPersonnelToWindow = async (
   req: Request,
   res: Response<ApiResponse>
 ) => {
-  const { windowId } = req.body;
+  const { windowId, assign } = req.body;
   const { personnelId } = req.params;
+
   if (!windowId) {
     return res
       .status(400)
@@ -57,7 +58,10 @@ export const assignWindow = async (
   try {
     const updatedWindow = await SWindow.findByIdAndUpdate(
       windowId,
-      { assignedPersonnelId: personnelId, windowStatus: WindowStatus.ACTIVE },
+      {
+        assignedPersonnelId: assign ? personnelId : null,
+        windowStatus: assign ? WindowStatus.ACTIVE : WindowStatus.INACTIVE,
+      },
       { new: true }
     );
     if (!updatedWindow) {
@@ -68,7 +72,7 @@ export const assignWindow = async (
     const updatedPersonnel = await User.findByIdAndUpdate(
       personnelId,
       {
-        assignedWindow: updatedWindow._id,
+        assignedWindow: assign ? updatedWindow._id : null,
       },
       { new: true }
     );
