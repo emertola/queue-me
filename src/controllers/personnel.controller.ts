@@ -19,6 +19,7 @@ export const getPersonnelPagedList = async (req: Request, res: Response) => {
 
   try {
     const items = await User.find(filterOptions, '-password')
+      .populate('assignedWindow')
       .sort(sortOptions)
       .skip((page < 0 ? 0 : page) * limit)
       .limit(limit);
@@ -78,8 +79,11 @@ export const assignWindow = async (
         .send({ data: 'Personnel not found.', message: 'Request failed.' });
     }
 
+    const { password, ...personnelWithoutPassword } =
+      updatedPersonnel.toObject();
+
     res.status(200).send({
-      data: updatedPersonnel.toObject(),
+      data: personnelWithoutPassword,
       message: 'Request successful!',
     });
   } catch (error) {
