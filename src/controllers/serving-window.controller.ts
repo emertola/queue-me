@@ -20,10 +20,9 @@ export const getWindowList = async (
         ],
       };
     }
-    const servingWindows = await SWindow.find(filterOptions).populate(
-      'nowServing',
-      'ticketNumber isPriority status'
-    );
+    const servingWindows = await SWindow.find(filterOptions)
+      .populate('nowServing', 'ticketNumber isPriority status')
+      .populate('assignedPersonnelId');
 
     res.status(200).send({
       data: servingWindows,

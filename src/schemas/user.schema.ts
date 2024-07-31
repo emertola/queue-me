@@ -32,6 +32,10 @@ const UserSchema = new Schema<IAuthUser>({
     type: Boolean,
     default: true,
   },
+  assignedWindow: {
+    type: Schema.Types.ObjectId,
+    ref: 'SWindow',
+  },
 });
 
 export const User: Model<IAuthUser> = model('User', UserSchema);

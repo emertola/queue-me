@@ -1,7 +1,8 @@
 import { Request, Response } from 'express';
 import { SortOrder } from 'mongoose';
-import { User } from '../schemas';
-import { IPaginated } from '../models';
+import { SWindow, User } from '../schemas';
+import { ApiResponse, IPaginated } from '../models';
+import { WindowStatus } from '../enums';
 
 export const getPersonnelPagedList = async (req: Request, res: Response) => {
   const page = parseInt(req.query.page as string) || 0;
@@ -37,5 +38,51 @@ export const getPersonnelPagedList = async (req: Request, res: Response) => {
     if (!res.headersSent) {
       res.status(500).json({ error: 'Server error' });
     }
+  }
+};
+
+export const assignWindow = async (
+  req: Request,
+  res: Response<ApiResponse>
+) => {
+  const { windowId } = req.body;
+  const { personnelId } = req.params;
+  if (!windowId) {
+    return res
+      .status(400)
+      .send({ data: 'No window id provided.', message: 'Request failed.' });
+  }
+
+  try {
+    const updatedWindow = await SWindow.findByIdAndUpdate(
+      windowId,
+      { assignedPersonnelId: personnelId, windowStatus: WindowStatus.ACTIVE },
+      { new: true }
+    );
+    if (!updatedWindow) {
+      return res
+        .status(400)
+        .send({ data: 'Window not found.', message: 'Request failed.' });
+    }
+    const updatedPersonnel = await User.findByIdAndUpdate(
+      personnelId,
+      {
+        assignedWindow: updatedWindow._id,
+      },
+      { new: true }
+    );
+
+    if (!updatedPersonnel) {
+      return res
+        .status(400)
+        .send({ data: 'Personnel not found.', message: 'Request failed.' });
+    }
+
+    res.status(200).send({
+      data: updatedPersonnel.toObject(),
+      message: 'Request successful!',
+    });
+  } catch (error) {
+    res.status(500).send({ data: { error }, message: 'Request failed.' });
   }
 };
