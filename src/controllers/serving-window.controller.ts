@@ -7,8 +7,20 @@ export const getWindowList = async (
   req: Request,
   res: Response<ApiResponse>
 ) => {
+  let filterOptions: { [key: string]: any } = {};
+
   try {
-    const servingWindows = await SWindow.find().populate(
+    const { unassignedOnly } = req.query;
+    if ((unassignedOnly as string)?.toLowerCase() === 'true') {
+      filterOptions = {
+        ...filterOptions,
+        $or: [
+          { assignedPersonnelId: { $exists: false } },
+          { assignedPersonnelId: null },
+        ],
+      };
+    }
+    const servingWindows = await SWindow.find(filterOptions).populate(
       'nowServing',
       'ticketNumber isPriority status'
     );
