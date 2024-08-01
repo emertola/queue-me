@@ -1,35 +1,48 @@
-import { Request, Response } from 'express';
-import { ApiResponse } from '../models';
-import { SWindow } from '../schemas/serving-window.schema';
-import { matchedData } from 'express-validator';
+import { Request, Response } from "express";
+import { ApiResponse } from "../models";
+import { SWindow } from "../schemas/serving-window.schema";
+import { matchedData } from "express-validator";
+import { WindowStatus } from "../enums";
 
 export const getWindowList = async (
   req: Request,
   res: Response<ApiResponse>
 ) => {
-  let filterOptions: { [key: string]: any } = {};
+  let query: { [key: string]: any } = {};
 
   try {
-    const { unassignedOnly } = req.query;
-    if ((unassignedOnly as string)?.toLowerCase() === 'true') {
-      filterOptions = {
-        ...filterOptions,
-        $or: [
-          { assignedPersonnelId: { $exists: false } },
-          { assignedPersonnelId: null },
-        ],
-      };
+    const { unassignedOnly, noActiveTicket, activeOnly } = req.query;
+    if ((unassignedOnly as string)?.toLowerCase() === "true") {
+      query.$or = [
+        { assignedPersonnelId: { $exists: false } },
+        { assignedPersonnelId: null },
+      ];
     }
+    if ((noActiveTicket as string)?.toLowerCase() === "true") {
+      query.nowServing = { $exists: false, $eq: null };
+    }
+    if ((activeOnly as string)?.toLowerCase() === "true") {
+      query.windowStatus = { $exists: true, $eq: WindowStatus.ACTIVE };
+    }
+
+    const filterOptions: { $and?: any[] } = {};
+
+    if (Object.keys(query).length > 0) {
+      filterOptions.$and = Object.keys(query).map((key) => ({
+        [key]: query[key],
+      }));
+    }
+
     const servingWindows = await SWindow.find(filterOptions)
-      .populate('nowServing', 'ticketNumber isPriority status')
-      .populate('assignedPersonnelId');
+      .populate("nowServing", "ticketNumber isPriority status")
+      .populate("assignedPersonnelId");
 
     res.status(200).send({
       data: servingWindows,
-      message: 'Request successful!',
+      message: "Request successful!",
     });
   } catch (error) {
-    res.status(500).send({ message: 'Request failed.', data: { error } });
+    res.status(500).send({ message: "Request failed.", data: { error } });
   }
 };
 
@@ -41,8 +54,8 @@ export const addWindow = async (req: Request, res: Response<ApiResponse>) => {
 
     if (isExistingWindow) {
       return res.status(400).send({
-        data: { error: 'Window Name already exists.' },
-        message: 'Request failed.',
+        data: { error: "Window Name already exists." },
+        message: "Request failed.",
       });
     }
 
@@ -55,9 +68,9 @@ export const addWindow = async (req: Request, res: Response<ApiResponse>) => {
 
     res.status(200).send({
       data: { ...newWindow.toObject() },
-      message: 'Request successful!',
+      message: "Request successful!",
     });
   } catch (error) {
-    res.status(500).send({ message: 'Request failed.', data: { error } });
+    res.status(500).send({ message: "Request failed.", data: { error } });
   }
 };

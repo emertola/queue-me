@@ -1,6 +1,6 @@
-import { Model, model, Schema } from 'mongoose';
-import { IAuthUser } from '../models';
-import { Gender } from '../enums';
+import { Model, model, Schema } from "mongoose";
+import { IAuthUser } from "../models";
+import { Gender } from "../enums";
 
 const UserSchema = new Schema<IAuthUser>({
   firstName: {
@@ -34,8 +34,9 @@ const UserSchema = new Schema<IAuthUser>({
   },
   assignedWindow: {
     type: Schema.Types.ObjectId,
-    ref: 'SWindow',
+    ref: "SWindow",
   },
+  assignedTickets: [{ type: Schema.Types.ObjectId, ref: "Ticket" }],
 });
 
-export const User: Model<IAuthUser> = model('User', UserSchema);
+export const User: Model<IAuthUser> = model("User", UserSchema);

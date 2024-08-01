@@ -1,5 +1,6 @@
-import { Document } from 'mongoose';
-import { Gender } from '../enums';
+import { Document } from "mongoose";
+import { Gender } from "../enums";
+import { ITicket } from "./ticket.model";
 
 export interface UserName extends Document {
   firstName: string;
@@ -20,4 +21,5 @@ export interface IAuthUser extends Document {
   gender: Gender;
   imgUrl?: string;
   active: boolean;
+  assignedTickets?: ITicket[];
 }
